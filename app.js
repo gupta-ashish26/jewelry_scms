@@ -2,17 +2,30 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const ejs = require("ejs")
 const db = require("./db")
+const favicon = require("serve-favicon")
+const path = require("path")
+const _ = require("lodash")
 
 const app = express()
+app.set('view engine', 'ejs')
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-
+app.use(express.static("public"))
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 
 //Endpoints:
 
-app.get("/", function(req, res) {
-    res.send("<h1>Hello World!</h1>")
+app.get("/", function(req, res){
+    res.render("home")
+})
+
+//Render other pages (about, contact etc)
+app.get("/:renderFile", function(req, res){
+
+    const requestFile = _.lowerCase(req.params.renderFile)
+    res.render(requestFile)
 })
 
 // Test API route to show table names
