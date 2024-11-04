@@ -188,6 +188,57 @@ app.delete('/admin/stock/delete/:id', (req, res) => {
     });
 });
 
+// Routes for Search and Filtering
+// Route for searching vendors by name, city, state, or rating
+app.get('/search/vendors', (req, res) => {
+    const { name, city, state, rating } = req.query;
+    let query = `SELECT * FROM Vendor WHERE 1=1`;
+
+    if (name) query += ` AND name LIKE '%${name}%'`;
+    if (city) query += ` AND city = '${city}'`;
+    if (state) query += ` AND state = '${state}'`;
+    if (rating) query += ` AND overall_rating >= ${rating}`;
+
+    // Execute query with callback
+    db.query(query, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+// Route for searching materials with detailed vendor info
+app.get('/search/materials', (req, res) => {
+    const { name, type, category_id } = req.query;
+
+    let query = `
+        SELECT Material.material_id, Material.name AS material_name, Material.type, Material.category_id,
+               Vendor.vendor_id, Vendor.name AS vendor_name, Vendor.city, Vendor.state, Vendor.zip_code,
+               Vendor.contact_info, Vendor.overall_rating, Vendor.feedback,
+               Stock.quantity AS stock_quantity, Stock.price AS stock_price
+        FROM Material
+        LEFT JOIN Stock ON Material.material_id = Stock.material_id
+        LEFT JOIN Vendor ON Stock.vendor_id = Vendor.vendor_id
+        WHERE 1=1
+    `;
+
+    // Add filters if provided in query
+    if (name) query += ` AND Material.name LIKE '%${name}%'`;
+    if (type) query += ` AND Material.type = '${type}'`;
+    if (category_id) query += ` AND Material.category_id = ${category_id}`;
+
+    // Execute the query
+    db.query(query, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 
 app.listen(3000, function() {
     console.log("Server is running at port 3000")
