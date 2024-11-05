@@ -1,54 +1,56 @@
 <%- include("../partials/header", { title: "Materials" }) %>
 
 <br><br><br><br>
-<div class="container my-5">
-    <!-- Search Form -->
-    <form class="row g-3 p-4 border rounded bg-light shadow-sm">
-        <h2 class="mb-3">Search Materials</h2>
+<section class="main-content">
+    <div class="container my-5">
+        <!-- Search Form -->
+        <form class="row g-3 p-4 border rounded bg-light shadow-sm">
+            <h2 class="mb-3">Search Materials</h2>
 
-        <div class="col-md-6">
-            <label for="name" class="form-label">Material Name</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="Material Name">
-        </div>
-        <div class="col-md-6">
-            <label for="type" class="form-label">Type</label>
-            <input type="text" class="form-control" id="type" name="type" placeholder="Type">
-        </div>
-        <div class="col-md-6">
-            <label for="category_id" class="form-label">Category ID</label>
-            <input type="number" class="form-control" id="category_id" name="category_id" placeholder="Category ID">
-        </div>
+            <div class="col-md-6">
+                <label for="name" class="form-label">Material Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Material Name">
+            </div>
+            <div class="col-md-6">
+                <label for="type" class="form-label">Type</label>
+                <input type="text" class="form-control" id="type" name="type" placeholder="Type">
+            </div>
+            <div class="col-md-6">
+                <label for="category_id" class="form-label">Category ID</label>
+                <input type="number" class="form-control" id="category_id" name="category_id" placeholder="Category ID">
+            </div>
 
-        <div class="col-12 text-center">
-            <button type="submit" class="btn btn-primary mt-3">Search</button>
-        </div>
-    </form>
-</div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary mt-3">Search</button>
+            </div>
+        </form>
+    </div>
 
-<!-- Results Section -->
-<div class="container my-5">
-    <h3 class="mb-4">Search Results</h3>
-    <div class="row">
-        <% materials.forEach(function(material) { %>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title"><%= material.material_name %></h5>
-                        <p class="card-text">
-                            <strong>Type:</strong> <%= material.type %> <br>
-                            <strong>Vendor:</strong> <%= material.vendor_name %> <br>
-                            <strong>Location:</strong> <%= material.city %>, <%= material.state %> <br>
-                            <strong>Stock:</strong> <%= material.stock_quantity %> units <br>
-                            <strong>Price:</strong> $<%= material.stock_price %>
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Rating: <%= material.overall_rating %> | Feedback: <%= material.feedback %></small>
+    <!-- Results Section -->
+    <div class="container my-5">
+        <h3 class="mb-4">Search Results</h3>
+        <div class="row">
+            <% materials.forEach(function(material) { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= material.material_name %></h5>
+                            <p class="card-text">
+                                <strong>Type:</strong> <%= material.type %> <br>
+                                <strong>Vendor:</strong> <%= material.vendor_name %> <br>
+                                <strong>Location:</strong> <%= material.city %>, <%= material.state %> <br>
+                                <strong>Stock:</strong> <%= material.stock_quantity %> units <br>
+                                <strong>Price:</strong> $<%= material.stock_price %>
+                            </p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Rating: <%= material.overall_rating %> | Feedback: <%= material.feedback %></small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <% }); %>
+            <% }); %>
+        </div>
     </div>
-</div>
+</section>
 
 <%- include("../partials/footer") %>

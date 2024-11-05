@@ -5,6 +5,9 @@ const db = require("./db")
 const favicon = require("serve-favicon")
 const path = require("path")
 const _ = require("lodash")
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const session = require('express-session')
 
 const app = express()
 app.set('view engine', 'ejs')
@@ -13,6 +16,71 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("public"))
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+
+// Initialize express-session
+app.use(session({
+    secret: 'Secret',
+    resave: false,
+    saveUninitialized: true,
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Configure Passport Local Strategy
+passport.use(new LocalStrategy((username, password, done) => {
+    const query = `SELECT * FROM Admin WHERE username = ? AND password = ?`;
+    db.query(query, [username, password], (error, results) => {
+        if (error) {
+            return done(error);
+        }
+        if (results.length === 0) {
+            return done(null, false, { message: 'Incorrect username or password' });
+        }
+        return done(null, results[0]);
+    });
+}));
+
+// Serialize and deserialize user
+passport.serializeUser((user, done) => done(null, user.username));
+passport.deserializeUser((username, done) => {
+    db.query('SELECT * FROM Admin WHERE username = ?', [username], (error, results) => {
+        if (error) return done(error);
+        done(null, results[0]);
+    });
+});
+
+// Function to check if an admin user exists, and create one if not
+async function ensureAdminUser() {
+    const queryCheck = `SELECT * FROM Admin WHERE username = 'admin'`;
+    const queryInsert = `INSERT INTO Admin (username, password) VALUES ('admin', 'admin')`;
+
+    db.query(queryCheck, (error, results) => {
+        if (error) {
+            console.error("Error checking for admin user:", error);
+            return;
+        }
+
+        if (results.length === 0) {
+            // No admin user found, so create one
+            db.query(queryInsert, (error) => {
+                if (error) {
+                    console.error("Error creating admin user:", error);
+                } else {
+                    console.log('Successfully added admin user with default credentials.');
+                }
+            });
+        } else {
+            console.log('Admin user already exists.');
+        }
+    });
+}
+
+// Call the ensureAdminUser function after a 1-second delay
+setTimeout(() => {
+    ensureAdminUser();
+}, 1000);
 
 
 //Endpoints:
@@ -248,6 +316,52 @@ app.get('/search/materials', (req, res) => {
             res.render('search/materials', { materials: results });
         }
     });
+});
+
+
+// Admin Routes:
+// Route to render the login page
+app.get('/login', (req, res) => {
+    res.render('login'); // Assuming you have a login.ejs
+});
+
+// Route to handle login form submission
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/admin/dashboard',
+    failureRedirect: '/login',
+}));
+
+// // Protected route for the admin dashboard
+// app.get('/admin/dashboard', (req, res) => {
+//     if (req.isAuthenticated()) {
+//         res.render('admin/dashboard'); // Admin dashboard page
+//     } else {
+//         res.redirect('/login');
+//     }
+// });
+
+// Route for logout
+app.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            console.error('Logout Error:', err);
+            return res.redirect('/admin/dashboard'); // Fallback in case of error
+        }
+        res.render('logout'); // Render the dummy logout view to redirect
+    });
+});
+
+
+
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+app.get('/admin/dashboard', ensureAuthenticated, (req, res) => {
+    res.render('admin/dashboard', { admin: req.user });
 });
 
 
