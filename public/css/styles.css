@@ -120,7 +120,7 @@ header .fas fa-bars{
     display: flex;
     align-items: center;
     min-height: 100vh;
-    background: url("../images/stat.png")no-repeat;
+    background: url("../images/stat.jpg")no-repeat;
     background-size: cover;
     background-position: center;
 }
@@ -175,4 +175,17 @@ footer {
     width: 100%;
     position: relative;
     bottom: 0;
+}
+
+.card {
+    border-radius: 10px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+}
+
+.form-label {
+    font-weight: bold;
 }

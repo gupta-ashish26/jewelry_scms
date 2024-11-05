@@ -201,8 +201,9 @@ app.delete('/admin/stock/delete/:id', (req, res) => {
     });
 });
 
-// Routes for Search and Filtering
-// Route for searching vendors by name, city, state, or rating
+// // Routes for Search and Filtering
+
+// Route for rendering vendors search page with results
 app.get('/search/vendors', (req, res) => {
     const { name, city, state, rating } = req.query;
     let query = `SELECT * FROM Vendor WHERE 1=1`;
@@ -212,17 +213,16 @@ app.get('/search/vendors', (req, res) => {
     if (state) query += ` AND state = '${state}'`;
     if (rating) query += ` AND overall_rating >= ${rating}`;
 
-    // Execute query with callback
     db.query(query, (error, results) => {
         if (error) {
             res.status(500).json({ error: error.message });
         } else {
-            res.json(results);
+            res.render('search/vendors', { vendors: results });
         }
     });
 });
 
-// Route for searching materials with detailed vendor info
+// Route for rendering materials search page with results
 app.get('/search/materials', (req, res) => {
     const { name, type, category_id } = req.query;
 
@@ -237,20 +237,19 @@ app.get('/search/materials', (req, res) => {
         WHERE 1=1
     `;
 
-    // Add filters if provided in query
     if (name) query += ` AND Material.name LIKE '%${name}%'`;
     if (type) query += ` AND Material.type = '${type}'`;
     if (category_id) query += ` AND Material.category_id = ${category_id}`;
 
-    // Execute the query
     db.query(query, (error, results) => {
         if (error) {
             res.status(500).json({ error: error.message });
         } else {
-            res.json(results);
+            res.render('search/materials', { materials: results });
         }
     });
 });
+
 
 
 app.listen(3000, function() {
