@@ -1,0 +1,80 @@
+<%- include("../partials/header", { title: "Edit Vendor" }) %>
+
+<style>
+    .center-div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .custom-card {
+      width: 350px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-card h2 {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .custom-card .form-control {
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      text-transform: none;
+    }
+
+    .custom {
+        font-size: 2rem;
+    }
+
+</style>
+
+<br><br><br><br>
+<section class="main-content">
+    <div class="center-div">
+        <!-- Form for editing vendor -->
+        <form action="/admin/editV" class="custom-card bg-light" method="POST">
+            <h2>Edit Vendor</h2>
+            <div class="form-group">
+                <label class="custom" for="vendor_id">Vendor ID</label>
+                <input type="number" id="vendor_id" name="vendor_id" class="form-control" value="<%= vendors.vendor_id %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="name">Vendor Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="<%= vendors.name %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="city">City</label>
+                <input type="text" id="city" name="city" class="form-control" value="<%= vendors.city %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="state">State</label>
+                <input type="text" id="state" name="state" class="form-control" value="<%= vendors.state %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="zip_code">Zip Code</label>
+                <input type="text" id="zip_code" name="zip_code" class="form-control" value="<%= vendors.zip_code %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="contact_info">Contact Info</label>
+                <input type="text" id="contact_info" name="contact_info" class="form-control" value="<%= vendors.contact_info %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="overall_rating">Overall Rating</label>
+                <input type="number" step="0.1" id="overall_rating" name="overall_rating" class="form-control" value="<%= vendors.overall_rating %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="feedback">Feedback</label>
+                <textarea id="feedback" name="feedback" class="form-control" rows="3"><%= vendors.feedback %></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Update Vendor</button>
+        </form>
+    </div>
+</section>
+
+
+<%- include("../partials/footer") %>

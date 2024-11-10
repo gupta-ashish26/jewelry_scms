@@ -1,0 +1,82 @@
+<%- include("../partials/header", { title: "Add Stock" }) %>
+
+<style>
+    .center-div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .custom-card {
+      width: 350px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-card h2 {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .custom-card .form-control {
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      text-transform: none;
+    }
+
+    .custom {
+        font-size: 2rem;
+    }
+
+</style>
+
+<br><br><br><br>
+<section class="main-content">
+    <div class="center-div">
+        <form action="/admin/addStock" class="custom-card bg-light" method="POST">
+            <h2>Add Stock</h2>
+            <div class="form-group">
+                <label class="custom" for="vendor_id">Vendor ID</label>
+                <input type="number" id="vendor_id" name="vendor_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="material_id">Material ID</label>
+                <input type="number" id="material_id" name="material_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="price">Price</label>
+                <input type="number" step="0.01" id="price" name="price" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Add Stock</button>
+        </form>
+
+        <div class="material-list" style="margin-top: 20px;">
+            <h3>Material IDs</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Material Name</th>
+                        <th>Material ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% materials.forEach(function(material) { %>
+                        <tr>
+                            <td><%= material.name %></td> <!-- Assuming name is the field for material name -->
+                            <td><%= material.material_id %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<%- include("../partials/footer") %>

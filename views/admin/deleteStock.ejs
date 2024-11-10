@@ -1,0 +1,55 @@
+<%- include("../partials/header", { title: "Edit Stock" }) %>
+
+<style>
+    .center-div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .custom-card {
+      width: 350px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-card h2 {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .custom-card .form-control {
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      text-transform: none;
+    }
+
+    .custom {
+        font-size: 2rem;
+    }
+
+</style>
+
+<br><br><br><br>
+<section class="main-content">
+    <div class="center-div">
+        <form action="/admin/deleteS" class="custom-card bg-light" method="POST">
+            <h2>Delete Stock</h2>
+            <div class="form-group">
+                <label for="vendor_id">Vendor ID</label>
+                <input type="number" id="vendor_id" name="vendor_id" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="material_id">Material ID</label>
+                <input type="number" id="material_id" name="material_id" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-danger btn-block">Delete Stock</button>
+        </form>
+    </div>
+</section>
+
+
+<%- include("../partials/footer") %>

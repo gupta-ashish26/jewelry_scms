@@ -106,166 +106,195 @@ app.get("/api/test", (req, res) => {
     })
 })
 
-// Route to show all vendors
-app.get("/admin/vendor/", (req, res) => {
-    db.query("select * from vendor", (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: err.message })
-        }
-        res.json(results)
-    })
-})
-
-// Route to show all materials
-app.get("/admin/material/", (req, res) => {
-    db.query("select * from material", (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: err.message })
-        }
-        res.json(results)
-    })
-})
-
-// Route to show all stocks
-app.get("/admin/stock/", (req, res) => {
-    db.query("select * from stock", (err, results) => {
-        if (err) {
-            return res.status(500).json({ error: err.message })
-        }
-        res.json(results)
-    })
-})
-
 // Route to add a new vendor
-app.post('/admin/vendor/add', (req, res) => {
-    // console.log(req.body); 
+app.get('/admin/addVendor', ensureAuthenticated, (req, res) => {
+    res.render('admin/addVendor');
+});
 
+app.post('/admin/addVendor', (req, res) => {
     const { name, city, state, zip_code, contact_info, overall_rating, feedback } = req.body;
     const sql = 'INSERT INTO Vendor (name, city, state, zip_code, contact_info, overall_rating, feedback) VALUES (?, ?, ?, ?, ?, ?, ?)';
     
-    db.query(sql, [name, city, state, zip_code, contact_info, overall_rating, feedback], (err, result) => {
+    db.query(sql, [name, city, state, zip_code, contact_info, overall_rating, feedback], (err) => {
         if (err) {
             console.error("Error adding vendor:", err);
             return res.status(500).send('Error adding vendor.');
         }
-        res.send('Vendor added successfully.');
+        res.redirect('/admin/dashboard');
     });
 });
 
-// Route to add a new material
-app.post('/admin/material/add', (req, res) => {
+// Route to render add material page with category types
+app.get('/admin/addMaterial', ensureAuthenticated, (req, res) => {
+    db.query('SELECT * FROM Category', (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.render('admin/addMaterial', { categories: results });
+    });
+});
+
+app.post('/admin/addMaterial', (req, res) => {
     const { name, type, description, category_id } = req.body;
     const sql = 'INSERT INTO Material (name, type, description, category_id) VALUES (?, ?, ?, ?)';
     
-    db.query(sql, [name, type, description, category_id], (err, result) => {
+    db.query(sql, [name, type, description, category_id], (err) => {
         if (err) {
             console.error("Error adding material:", err);
             return res.status(500).send('Error adding material.');
         }
-        res.send('Material added successfully.');
+        res.redirect('/admin/dashboard');
     });
 });
 
-// Route to add stock for a vendor-material pair
-app.post('/admin/stock/add', (req, res) => {
+// Route to render add stock page with material list
+app.get('/admin/addStock', ensureAuthenticated, (req, res) => {
+    db.query('SELECT * FROM Material', (err, results) => {  
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.render('admin/addStock', { materials: results });
+    });
+});
+
+
+app.post('/admin/addStock', (req, res) => {
     const { vendor_id, material_id, quantity, price } = req.body;
     const sql = 'INSERT INTO Stock (vendor_id, material_id, quantity, price) VALUES (?, ?, ?, ?)';
     
-    db.query(sql, [vendor_id, material_id, quantity, price], (err, result) => {
+    db.query(sql, [vendor_id, material_id, quantity, price], (err) => {
         if (err) {
             console.error("Error adding stock:", err);
             return res.status(500).send('Error adding stock.');
         }
-        res.send('Stock added successfully.');
+        res.redirect('/admin/dashboard');
     });
 });
 
+// Route to edit vendors
+app.get('/admin/editVendor', ensureAuthenticated, (req, res) => {
+    db.query('SELECT * FROM Vendor', (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.render('admin/editVendor', { vendors: results });
+    });
+});
 
-// Route to update vendor info
-app.put('/admin/vendor/update/:id', (req, res) => {
-    const vendor_id = req.params.id;
-    const { name, city, state, zip_code, contact_info, overall_rating, feedback } = req.body;
+app.post('/admin/editV', (req, res) => {
+    const { vendor_id,name, city, state, zip_code, contact_info, overall_rating, feedback } = req.body;
     const sql = 'UPDATE Vendor SET name = ?, city = ?, state = ?, zip_code = ?, contact_info = ?, overall_rating = ?, feedback = ? WHERE vendor_id = ?';
     
-    db.query(sql, [name, city, state, zip_code, contact_info, overall_rating, feedback, vendor_id], (err, result) => {
+    db.query(sql, [name, city, state, zip_code, contact_info, overall_rating, feedback, vendor_id], (err) => {
         if (err) {
             console.error("Error updating vendor:", err);
             return res.status(500).send('Error updating vendor.');
         }
-        res.send('Vendor updated successfully.');
+        res.redirect('/admin/dashboard');
     });
 });
 
-// Route to update material info
-app.put('/admin/material/update/:id', (req, res) => {
-    const material_id = req.params.id;
-    const { name, type, description, category_id } = req.body;
+// Route to delete a vendor
+app.get('/admin/deleteVendor', ensureAuthenticated, (req, res) => {
+    res.render('admin/deleteVendor');
+});
+
+app.post('/admin/deleteV', (req, res) => {
+    const {vendor_id} = req.body;
+    const sql = 'DELETE FROM Vendor WHERE vendor_id = ?';
+    
+    db.query(sql, [vendor_id], (err) => {
+        if (err) {
+            console.error("Error deleting vendor:", err);
+            return res.status(500).send('Error deleting vendor.');
+        }
+        res.redirect('/admin/dashboard');
+    });
+});
+
+
+// Route to edit materials
+app.get('/admin/editMaterial', ensureAuthenticated, (req, res) => {
+    db.query('SELECT * FROM Material', (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.render('admin/editMaterial', { materials: results });
+    });
+});
+
+app.post('/admin/editM', (req, res) => {
+    const { material_id, name, type, description, category_id } = req.body;
     const sql = 'UPDATE Material SET name = ?, type = ?, description = ?, category_id = ? WHERE material_id = ?';
     
-    db.query(sql, [name, type, description, category_id, material_id], (err, result) => {
+    db.query(sql, [name, type, description, category_id, material_id], (err) => {
         if (err) {
             console.error("Error updating material:", err);
             return res.status(500).send('Error updating material.');
         }
-        res.send('Material updated successfully.');
-    });
-});
-
-// Route to update stock for a vendor-material pair
-app.put('/admin/stock/update/:id', (req, res) => {
-    const stock_id = req.params.id;
-    const { quantity, price } = req.body;
-    const sql = 'UPDATE Stock SET quantity = ?, price = ? WHERE stock_id = ?';
-    
-    db.query(sql, [quantity, price, stock_id], (err, result) => {
-        if (err) {
-            console.error("Error updating stock:", err);
-            return res.status(500).send('Error updating stock.');
-        }
-        res.send('Stock updated successfully.');
-    });
-});
-
-
-// Route to delete a vendor
-app.delete('/admin/vendor/delete/:id', (req, res) => {
-    const vendor_id = req.params.id;
-    const sql = 'DELETE FROM Vendor WHERE vendor_id = ?';
-    
-    db.query(sql, [vendor_id], (err, result) => {
-        if (err) {
-            console.error("Error delete vendor:", err);
-            return res.status(500).send('Error deleting vendor.');
-        }
-        res.send('Vendor deleted successfully.');
+        res.redirect('/admin/dashboard');
     });
 });
 
 // Route to delete a material
-app.delete('/admin/material/delete/:id', (req, res) => {
-    const material_id = req.params.id;
+app.get('/admin/deleteMaterial', ensureAuthenticated, (req, res) => {
+    res.render('admin/deleteMaterial');
+});
+
+// Route to handle  deletion by material_id and vendor_id
+app.post('/admin/deleteM', (req, res) => {
+    const { material_id } = req.body;
     const sql = 'DELETE FROM Material WHERE material_id = ?';
     
-    db.query(sql, [material_id], (err, result) => {
+    db.query(sql, [material_id], (err) => {
         if (err) {
             console.error("Error deleting material:", err);
             return res.status(500).send('Error deleting material.');
         }
-        res.send('Material deleted successfully.');
+        res.redirect('/admin/dashboard');
+    });
+});
+
+// Route to edit stock
+app.get('/admin/editStock', ensureAuthenticated, (req, res) => {
+    db.query('SELECT * FROM Stock', (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.render('admin/editStock', { stocks: results });
+    });
+});
+
+
+app.post('/admin/editS', (req, res) => {
+    const { material_id, vendor_id, quantity, price } = req.body;
+    const sql = 'UPDATE Stock SET quantity = ?, price = ? WHERE material_id = ? AND vendor_id = ?';
+    
+    db.query(sql, [quantity, price, material_id, vendor_id], (err) => {
+        if (err) {
+            console.error("Error updating stock:", err);
+            return res.status(500).send('Error updating stock.');
+        }
+        res.redirect('/admin/dashboard');
     });
 });
 
 // Route to delete stock
-app.delete('/admin/stock/delete/:id', (req, res) => {
-    const stock_id = req.params.id;
-    const sql = 'DELETE FROM Stock WHERE stock_id = ?';
-    
-    db.query(sql, [stock_id], (err, result) => {
+
+app.get('/admin/deleteStock', ensureAuthenticated, (req, res) => {
+    res.render('admin/deleteStock');
+});
+
+app.post('/admin/deleteS', (req, res) => {
+    const { material_id, vendor_id } = req.body;
+    const sql = 'DELETE FROM Stock WHERE material_id = ? AND vendor_id = ?';
+
+    db.query(sql, [material_id, vendor_id], (err) => {
         if (err) {
             console.error("Error deleting stock:", err);
             return res.status(500).send('Error deleting stock.');
         }
-        res.send('Stock deleted successfully.');
+        res.redirect('/admin/dashboard');
     });
 });
 

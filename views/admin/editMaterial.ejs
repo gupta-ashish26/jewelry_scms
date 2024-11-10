@@ -1,0 +1,66 @@
+<%- include("../partials/header", { title: "Edit Material" }) %>
+
+<style>
+    .center-div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .custom-card {
+      width: 350px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-card h2 {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .custom-card .form-control {
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      text-transform: none;
+    }
+
+    .custom {
+        font-size: 2rem;
+    }
+
+</style>
+
+<br><br><br><br>
+<section class="main-content">
+    <div class="center-div">
+        <form action="/admin/editM" class="custom-card bg-light" method="POST">
+            <h2>Edit Material</h2>
+            <div class="form-group">
+                <label class="custom" for="material_id">Material ID</label>
+                <input type="number" id="material_id" name="material_id" class="form-control" value="<%= materials.material_id %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="name">Material Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="<%= materials.name %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="type">Type</label>
+                <input type="text" id="type" name="type" class="form-control" value="<%= materials.type %>" required>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="3" required><%= materials.description %></textarea>
+            </div>
+            <div class="form-group">
+                <label class="custom" for="category_id">Category ID</label>
+                <input type="number" id="category_id" name="category_id" class="form-control" value="<%= materials.category_id %>" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Update Material</button>
+        </form>
+    </div>
+</section>
+
+<%- include("../partials/footer") %>

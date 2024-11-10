@@ -1,9 +1,26 @@
-<%- include("../partials/header", { title: "Vendors" }) %>
+<%- include("../partials/header", { title: "Admin Dashboard" }) %>
 
 <br><br><br><br>
 <section class="main-content">
     <h3>Dashboard</h3>
-    <a href="/logout" class="btn">logout</a>
+    <div class="btn-group">
+        <a href="/admin/addMaterial" class="btn btn-primary">Add Materials</a>
+        <a href="/admin/editMaterial" class="btn btn-primary">Edit Materials</a>
+        <a href="/admin/deleteMaterial" class="btn btn-primary">Delete Materials</a>
+    </div>
+    <div class="btn-group">
+        <a href="/admin/addVendor" class="btn btn-primary">Add Vendors</a>
+        <a href="/admin/editVendor" class="btn btn-primary">Edit Vendors</a>
+        <a href="/admin/deleteVendor" class="btn btn-primary">Delete Vendors</a>
+    </div>
+    <div class="btn-group">
+        <a href="/admin/addStock" class="btn btn-primary">Add Stock</a>
+        <a href="/admin/editStock" class="btn btn-primary">Edit Stock</a>
+        <a href="/admin/deleteStock" class="btn btn-primary">Delete Stock</a>
+    </div>
+    <div class="btn-group">
+        <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
 </section>
 
 <%- include("../partials/footer") %>
